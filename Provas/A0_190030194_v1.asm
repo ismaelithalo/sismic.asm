@@ -1,14 +1,12 @@
 A0:       MOV   #COVID_MM7, R4
           MOV   #COVID_MAR,R5
+	  MOV.b #31, R6
           CALL  #MAR_MM7
           JMP   $
           NOP
 
 ; SUA SOLUÇÃO
-MAR_MM7:
-          mov.b #31, R6; março
-
-loop_vec: mov.w  0(R5), R10
+MAR_MM7:  mov.w  0(R5), R10
           add.w -2(R5), R10
           add.w -4(R5), R10
           add.w -6(R5), R10
@@ -16,17 +14,17 @@ loop_vec: mov.w  0(R5), R10
           add.w -10(R5), R10
           add.w -12(R5), R10
 	  clr.w R11
-div:
-          sub.w #7, R10
+;
+DIV:	  sub.w #7, R10
           inc  R11
           cmp  #7, R10
-          jc  div
-
+          jc  DIV
+;
           mov.w R11, 0(R4)
           incd R5
           incd R4
           dec.b R6
-          jnz loop_vec
+          jnz MAR_MM7
           ret
 
              .data
