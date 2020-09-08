@@ -15,7 +15,7 @@ loop_vec: mov.w  0(R5), R10
           add.w -8(R5), R10
           add.w -10(R5), R10
           add.w -12(R5), R10
-		      clr.w R11
+	  clr.w R11
 div:
           sub.w #7, R10
           inc  R11
