@@ -1,31 +1,31 @@
-A0:       MOV   #COVID_MM7, R4
-          MOV   #COVID_MAR,R5
-	  MOV.b #31, R6
-          CALL  #MAR_MM7
-          JMP   $
-          NOP
+A0:      MOV   #COVID_MM7, R4
+         MOV   #COVID_MAR,R5
+	      MOV.b #31, R6
+         CALL  #MAR_MM7
+         JMP   $
+         NOP
 
 ; SUA SOLUÇÃO
-MAR_MM7:  mov.w  0(R5), R10
-          add.w -2(R5), R10
-          add.w -4(R5), R10
-          add.w -6(R5), R10
-          add.w -8(R5), R10
-          add.w -10(R5), R10
-          add.w -12(R5), R10
-	  clr.w R11
+MAR_MM7: mov.w  0(R5), R10
+         add.w -2(R5), R10
+         add.w -4(R5), R10
+         add.w -6(R5), R10
+         add.w -8(R5), R10
+         add.w -10(R5), R10
+         add.w -12(R5), R10
+	      clr.w R11
 ;
-DIV:	  sub.w #7, R10
-          inc  R11
-          cmp  #7, R10
-          jc  DIV
+DIV:     sub.w #7, R10
+         inc  R11
+         cmp  #7, R10
+         jc  DIV
 ;
-          mov.w R11, 0(R4)
-          incd R5
-          incd R4
-          dec.b R6
-          jnz MAR_MM7
-          ret
+         mov.w R11, 0(R4)
+         incd R5
+         incd R4
+         dec.b R6
+         jnz MAR_MM7
+         ret
 
              .data
 ; Casos nos últimos 6 dias de fevereiro
