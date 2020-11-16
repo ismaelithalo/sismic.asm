@@ -20,15 +20,14 @@ int main(void)
     io_config();
     ADC_config();      // Configura o ADC
 
-    volatile unsigned int x = 0;
-    volatile unsigned int y = 0;
+    volatile unsigned int buffer_a0[8],buffer_a1[8],i,voltagem_a0_uni,voltagem_a0_dec,voltagem_a1_uni, voltagem_a1_dec;
+    volatile unsigned long int media_a0=0, media_a1=0;
 
+    while(TRUE) {
 
-    while(1)
-    {
-        while(P1IN & BIT1);
+        while(P6IN&BIT2);
 
-        //Apaga os leds
+         //Apaga os leds
         P1OUT &= ~BIT0;
         P4OUT &= ~BIT7;
 
@@ -40,31 +39,44 @@ int main(void)
         while(!(ADC12IFG & ADC12IFG1));
 
         // Guarda o dado convertido
-        x = ADC12MEM0;
-        y = ADC12MEM1;
+        buffer_a0[0] = ADC12MEM0;     buffer_a1[0] = ADC12MEM1;
+        buffer_a0[1] = ADC12MEM2;     buffer_a1[1] = ADC12MEM3;
+        buffer_a0[2] = ADC12MEM4;     buffer_a1[2] = ADC12MEM5;
+        buffer_a0[3] = ADC12MEM6;     buffer_a1[3] = ADC12MEM7;
+        buffer_a0[4] = ADC12MEM8;     buffer_a1[4] = ADC12MEM9;
+        buffer_a0[5] = ADC12MEM10;    buffer_a1[5] = ADC12MEM11;
+        buffer_a0[6] = ADC12MEM12;    buffer_a1[6] = ADC12MEM13;
+        buffer_a0[7] = ADC12MEM14;    buffer_a1[7] = ADC12MEM15;
 
-        if(x & BITB)
-        {
+        // Soma todos os valores das conversões
+        for (i=0; i<8; i++){
+            media_a0 = media_a0 + buffer_a0[i];
+            media_a1 = media_a1 + buffer_a1[i];
+        }
+
+        // Faz três rotações para a direita que é o equivalente a dividir por 8
+        media_a0 = (media_a0 >> 3);
+        media_a1 = (media_a1 >> 3);
+
+        // (3,3-0)/4094 = 806 micro volts  * media = conversão para volts
+        voltagem_a0_uni = (media_a0*806)/1000000;
+        voltagem_a0_dec = (media_a0*806)%1000000;
+        voltagem_a1_uni = (media_a1*806)/1000000;
+        voltagem_a1_dec = (media_a1*806)%1000000;
+
+        if(buffer_a0[0] & BITB){
             P1OUT |= BIT0;
         }
-        else
-        {
+        else{
             P4OUT |= BIT7;
         }
 
         atraso(60000);
 
-
         ADC12CTL0 &= ~ADC12ENC;         // Desabilita as conversões antes de configuraro módulo!
         ADC12CTL0 |= ADC12ENC;          // Habilita o ADC para permitir conversões!
 
-    }
-    while(TRUE) {
-             if (mon_s3() == TRUE) {     //Chave 1?
-                 debounce(DBC);
-                 P4OUT ^= BIT7;
-             }
-             }
+        }
 
     return 0;
 }
@@ -136,14 +148,28 @@ void ADC_config() {
         ADC12CTL2 = ADC12TCOFF +        // Desliga o sensor de temperatura
                     ADC12RES_2;         // Resolução = 12 bits
 
-        // Canal 0
-        ADC12MCTL0 = ADC12SREF_0 +       // Vref- = GND; Vref+ = Vcc = 3.3V
-                    ADC12INCH_0;       // Memória 0 = canal 0.
-        // Canal 1
-        ADC12MCTL1 = ADC12SREF_0 +       // Vref- = GND; Vref+ = Vcc = 3.3V
-                    ADC12INCH_1 +      // Memória 1 = canal 1.
-                    ADC12EOS;          // Fim da sequencia no canal 1
+        // Aproveitando os 16 canais do conversor, as 16 coletas serão feitas de uma única vez porém ALTERNADAS
+        // ADC12SREF_0 - Vref- = GND; Vref+ = Vcc = 3.3V  - Referências de conversão
 
+        ADC12MCTL0 = ADC12SREF_0 + ADC12INCH_0;   // Memória 0 = canal 0.
+        ADC12MCTL1 = ADC12SREF_0 + ADC12INCH_1;   // Memória 1 = canal 1.
+        ADC12MCTL2 = ADC12SREF_0 + ADC12INCH_0;   // Memória 2 = canal 0.
+        ADC12MCTL3 = ADC12SREF_0 + ADC12INCH_1;   // Memória 3 = canal 1.
+        ADC12MCTL4 = ADC12SREF_0 + ADC12INCH_0;   // Memória 4 = canal 0.
+        ADC12MCTL5 = ADC12SREF_0 + ADC12INCH_1;   // Memória 5 = canal 1.
+        ADC12MCTL6 = ADC12SREF_0 + ADC12INCH_0;   // Memória 6 = canal 0.
+        ADC12MCTL7 = ADC12SREF_0 + ADC12INCH_1;   // Memória 7 = canal 1.
+        ADC12MCTL8 = ADC12SREF_0 + ADC12INCH_0;   // Memória 8 = canal 0.
+        ADC12MCTL9 = ADC12SREF_0 + ADC12INCH_1;   // Memória 9 = canal 1.
+        ADC12MCTL10 = ADC12SREF_0 + ADC12INCH_0;   // Memória 10 = canal 0.
+        ADC12MCTL11 = ADC12SREF_0 + ADC12INCH_1;   // Memória 11 = canal 1.
+        ADC12MCTL12 = ADC12SREF_0 + ADC12INCH_0;   // Memória 12 = canal 0.
+        ADC12MCTL13 = ADC12SREF_0 + ADC12INCH_1;   // Memória 13 = canal 1.
+        ADC12MCTL14 = ADC12SREF_0 + ADC12INCH_0;   // Memória 14 = canal 0.
+        ADC12MCTL15 = ADC12SREF_0 +                // Memória 15 = canal 1.
+                      ADC12INCH_1 +
+                      ADC12EOS;                    // Fim da sequência de conversão    
+                    
         ADC12IFG = 0;
 
         ADC12CTL0 |= ADC12ENC;          // Habilita o ADC para permitir conversões!
