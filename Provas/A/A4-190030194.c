@@ -110,9 +110,9 @@ __interrupt void isr_USCI_A1(void){
 void USCI_A1_config(void){
     UCA1CTL1 = UCSWRST;
     UCA1CTL0 = 0;
-    UCA1BRW = 5;           // <== Alterar
-    UCA1MCTL = UCBRF_0 |   // <== Alterar
-               UCBRS_0 |   // <== Alterar
+    UCA1BRW = 3;           // <== Alterar
+    UCA1MCTL = UCBRF_6 |   // <== Alterar
+               UCBRS_1 |   // <== Alterar
                UCOS16;     //Modo Super Amostragem
     P4SEL |= BIT3 | BIT0;  //Disponibilizar P4.3 e P4.0
     PMAPKEYID = 0X02D52;   //Liberar mapeamento de P4
