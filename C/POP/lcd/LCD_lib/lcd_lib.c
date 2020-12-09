@@ -29,7 +29,8 @@ void main(void){
 	config_I2C();
 	LCD_inic();
 	//LCD pronto para usar
-	...
+
+
 }
 
 

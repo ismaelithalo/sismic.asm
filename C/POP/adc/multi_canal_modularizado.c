@@ -43,14 +43,14 @@ int main(void)
         x = ADC12MEM0;
         y = ADC12MEM1;
 
-        if(x & BITB)
-        {
-            P1OUT |= BIT0;
-        }
-        else
-        {
-            P4OUT |= BIT7;
-        }
+        // if(x & BITB)
+        // {
+        //     P1OUT |= BIT0;
+        // }
+        // else
+        // {
+        //     P4OUT |= BIT7;
+        // }
 
         atraso(60000);
 
@@ -147,4 +147,39 @@ void ADC_config() {
         ADC12IFG = 0;
 
         ADC12CTL0 |= ADC12ENC;          // Habilita o ADC para permitir conversões!
+
+        __enable_interrupt();
+}
+
+//ADC12IFG =
+
+#pragma vector = ADC12_VECTOR //Interrupção de número 54 
+__interrupt void adc12_isr(void){ 
+    switch(__even_in_range(ADC12IV,0x24)){ 
+        case 0x00: break;
+        case 0x02: break;
+        case 0x04: break;
+        case 0x06: 
+        P1OUT |= BIT0;
+        ADC12IFG = 0;
+        break;
+        case 0x08: break;
+        case 0x0A: break;
+        case 0x0C: break;
+        case 0x0E: break;
+        case 0x10: break;
+        case 0x12: break;
+        case 0x14: break;
+        case 0x16: break;
+        case 0x18: break;
+        case 0x1A: break;
+        case 0x1C: break;
+        case 0x1E: break;
+        case 0x20: break;
+        case 0x22: break;
+        case 0x24: // ADC12MEM15 interrupt flag
+        // P1OUT |= BIT0;
+        // ADC12IFG = 0;
+        break;
+    }
 }
